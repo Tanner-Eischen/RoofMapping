@@ -2,6 +2,7 @@ import { AnalysisRepository } from '../repositories/analysisRepository';
 import { MeasurementsRepository } from '../repositories/measurementsRepository';
 import { PhotoRepository } from '../repositories/photoRepository';
 import { enqueueAnalysis } from '../queues/sqs';
+import { runPipeline } from '../ml/pipeline';
 
 type Job = { progress: number; done: boolean; timer?: NodeJS.Timer };
 const jobs = new Map<string, Job>();
@@ -19,12 +20,13 @@ export async function submitAnalysis(address: string): Promise<{ id: string }> {
     if (job.progress >= 100 && !job.done) {
       job.done = true;
       if (job.timer) clearInterval(job.timer);
-      await measurementsRepo.upsertByAnalysisId(created.id, {
-        roofAreaSqm: 120.5,
-        pitchDeg: 30.0,
-        perimeterM: 85.2,
-      } as any);
       await analysisRepo.updateStatus(created.id, 'COMPLETED' as any);
+      const result = await runPipeline(created.address);
+      await measurementsRepo.upsertByAnalysisId(created.id, {
+        roofAreaSqm: result.measurements.roofAreaSqm,
+        pitchDeg: result.measurements.pitchDeg,
+        perimeterM: result.measurements.perimeterM,
+      } as any);
     }
   }, 800);
   jobs.set(created.id, job);
