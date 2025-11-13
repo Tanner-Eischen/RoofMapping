@@ -1,6 +1,7 @@
 import { AnalysisRepository } from '../repositories/analysisRepository';
 import { MeasurementsRepository } from '../repositories/measurementsRepository';
 import { PhotoRepository } from '../repositories/photoRepository';
+import { enqueueAnalysis } from '../queues/sqs';
 
 type Job = { progress: number; done: boolean; timer?: NodeJS.Timer };
 const jobs = new Map<string, Job>();
@@ -12,6 +13,7 @@ const photoRepo = new PhotoRepository();
 export async function submitAnalysis(address: string): Promise<{ id: string }> {
   const created = await analysisRepo.create({ address, status: 'PROCESSING' as any });
   const job: Job = { progress: 0, done: false };
+  await enqueueAnalysis(created.id).catch(() => {});
   job.timer = setInterval(async () => {
     job.progress = Math.min(100, job.progress + 10);
     if (job.progress >= 100 && !job.done) {
