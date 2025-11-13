@@ -1,0 +1,46 @@
+// Prisma schema for Roof Mapping
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Analysis {
+  id           String        @id @default(uuid())
+  address      String
+  status       AnalysisStatus @default(PENDING)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  measurements Measurements?
+  photos       Photo[]
+}
+
+model Measurements {
+  id          String   @id @default(uuid())
+  analysisId  String   @unique
+  analysis    Analysis @relation(fields: [analysisId], references: [id])
+  roofAreaSqm Float?
+  pitchDeg    Float?
+  perimeterM  Float?
+}
+
+model Photo {
+  id         String   @id @default(uuid())
+  analysisId String
+  analysis   Analysis @relation(fields: [analysisId], references: [id])
+  url        String
+  width      Int?
+  height     Int?
+  createdAt  DateTime @default(now())
+}
+
+enum AnalysisStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}

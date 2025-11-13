@@ -1,0 +1,2 @@
+# 2. Problem Statement
+Contractors urgently need reliable and precise roof measurements to improve efficiency in proposals and project management. Current tools are often costly, dependent on external vendors, or ineffective in challenging capture conditions such as overhanging trees or remote locations. A cost-effective, mobile, and user-friendly alternative is needed to address these limitations and meet the demands of tight timelines.

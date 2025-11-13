@@ -1,0 +1,11 @@
+# 9. Technical Requirements
+- **System Architecture**: Hybrid serverless architecture with Next.js + AWS Lambda.
+- **Frontend**: Next.js 14 + React 18 + shadcn/ui + Tailwind CSS.
+- **Backend**: Next.js API Routes + Python ML Services.
+- **Database**: PostgreSQL with Prisma ORM.
+- **Cache**: Redis for results caching.
+- **Queue**: AWS SQS for async ML processing.
+- **ML Pipeline**: AWS Lambda with Mask R-CNN (Detectron2).
+- **Storage**: AWS S3 for images and generated PDFs.
+- **Integrations**: Sentinel Hub (satellite), USGS 3DEP (LiDAR), Google Maps (geocoding).
+- **Deployment**: Vercel (frontend/API), AWS (ML services).
