@@ -229,6 +229,36 @@ export async function runPipelineQuick(
     }
   }
 
+  // Ensure poly is always initialized (fallback for edge cases)
+  if (!poly || !imagery) {
+    // Last resort: create a default polygon centered on the image
+    const size = imagery?.tileSize || 512;
+    const centerX = size / 2;
+    const centerY = size / 2;
+    const radius = 50;
+    poly = [
+      [centerX - radius, centerY - radius],
+      [centerX + radius, centerY - radius],
+      [centerX + radius, centerY + radius],
+      [centerX - radius, centerY + radius],
+    ] as Array<[number, number]>;
+    
+    // If we still don't have imagery, create placeholder
+    if (!imagery) {
+      const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${size}' height='${size}'><defs><pattern id='g' width='32' height='32' patternUnits='userSpaceOnUse'><path d='M32 0H0V32' fill='none' stroke='#ddd'/></pattern></defs><rect width='${size}' height='${size}' fill='url(#g)'/><text x='${size/2}' y='${size/2}' text-anchor='middle' fill='#999' font-family='sans-serif' font-size='16'>Satellite imagery unavailable</text></svg>`;
+      imagery = { 
+        id: `placeholder-${lat}-${lng}`, 
+        url: 'data:image/svg+xml,' + encodeURIComponent(svg), 
+        resolutionM: 1, 
+        cloudCoverage: 0, 
+        tileX: 0, 
+        tileY: 0, 
+        zoom: 18, 
+        tileSize: size 
+      };
+    }
+  }
+
   const polys = [poly];
   // No clamping: keep polygon pixels as-is; image is centered on roof
   const m = computeMeasurements(polys, imagery.resolutionM, { lidarPointDensity: 0, detectionScore: 0.5 });
