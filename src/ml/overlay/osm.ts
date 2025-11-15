@@ -18,7 +18,7 @@ export async function fetchBuildingPolygon(lat: number, lng: number): Promise<Ar
     
     // Prefer ways over relations (simpler), but relations might have more detail
     // Sort by type: ways first, then relations
-    els.sort((a, b) => {
+    els.sort((a: any, b: any) => {
       if (a.type === 'way' && b.type === 'relation') return -1;
       if (a.type === 'relation' && b.type === 'way') return 1;
       return 0;
