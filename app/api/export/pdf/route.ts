@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getResults } from '@/src/services/analysisService';
-import { buildAnalysisPdf } from '@/src/services/pdfService';
+import { getResults } from '../../../../src/services/analysisService';
+import { buildAnalysisPdf } from '../../../../src/services/pdfService';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);

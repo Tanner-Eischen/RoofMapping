@@ -1,24 +1,24 @@
-type CacheRecord<T> = { value: T; expiresAt?: number };
+import { env } from './env';
 
-class InMemoryCache {
-  private store = new Map<string, CacheRecord<any>>();
-  get<T>(key: string): T | null {
-    const rec = this.store.get(key);
-    if (!rec) return null;
-    if (rec.expiresAt && rec.expiresAt < Date.now()) {
-      this.store.delete(key);
-      return null;
-    }
-    return rec.value as T;
+type CacheEntry = { value: any; expiresAt: number };
+const mem = new Map<string, CacheEntry>();
+
+export async function cacheGet(key: string): Promise<any | null> {
+  const entry = mem.get(key);
+  if (!entry) return null;
+  if (Date.now() > entry.expiresAt) {
+    mem.delete(key);
+    return null;
   }
-  set<T>(key: string, value: T, ttlMs?: number) {
-    const expiresAt = ttlMs ? Date.now() + ttlMs : undefined;
-    this.store.set(key, { value, expiresAt });
-  }
-  del(key: string) {
-    this.store.delete(key);
-  }
+  return entry.value;
 }
 
-export const cache = new InMemoryCache();
+export async function cacheSet(key: string, value: any, ttlSeconds: number): Promise<void> {
+  const expiresAt = Date.now() + ttlSeconds * 1000;
+  mem.set(key, { value, expiresAt });
+}
+
+export async function cacheDel(key: string): Promise<void> {
+  mem.delete(key);
+}
 

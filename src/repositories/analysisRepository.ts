@@ -10,7 +10,7 @@ export class AnalysisRepository {
     return prisma.analysis.findUnique({ where: { id } });
   }
 
-  async updateStatus(id: string, status: Analysis['status']): Promise<Analysis> {
-    return prisma.analysis.update({ where: { id }, data: { status } });
+  async updateStatus(id: string, status: Analysis['status'], completedAt?: Date): Promise<Analysis> {
+    return prisma.analysis.update({ where: { id }, data: { status, completedAt } });
   }
 }

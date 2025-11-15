@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { PhotoRepository } from '@/src/repositories/photoRepository';
+import { PhotoRepository } from '../../../../src/repositories/photoRepository';
 
 const repo = new PhotoRepository();
 

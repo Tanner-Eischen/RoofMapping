@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '../../lib/utils';
 
-export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+export type ButtonProps = (React.ButtonHTMLAttributes<HTMLButtonElement> & React.AnchorHTMLAttributes<HTMLAnchorElement>) & {
   variant?: 'default' | 'outline' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
 };
@@ -18,8 +18,7 @@ const sizes = {
   lg: 'h-12 px-6 text-base',
 };
 
-export function Button({ className, variant = 'default', size = 'md', ...props }: ButtonProps) {
-  return (
-    <button className={cn(base, variants[variant], sizes[size], className)} {...props} />
-  );
+export function Button({ className, variant = 'default', size = 'md', href, ...props }: ButtonProps) {
+  const Component: any = href ? 'a' : 'button';
+  return <Component href={href} className={cn(base, variants[variant], sizes[size], className)} {...props} />;
 }

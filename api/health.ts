@@ -10,11 +10,10 @@ export type HealthPayload = {
 };
 
 export function getHealth(): HealthPayload {
-  // Placeholder checks; in real implementation, wire actual clients
-  const checks = {
-    db: 'unknown' as const,
-    redis: 'unknown' as const,
-    sqs: 'unknown' as const,
+  const checks: HealthPayload['checks'] = {
+    db: 'unknown',
+    redis: 'unknown',
+    sqs: 'unknown',
   };
 
   const allHealthy = Object.values(checks).every((c) => c === 'healthy');
@@ -29,7 +28,7 @@ export function getHealth(): HealthPayload {
 }
 
 import { checkDatabase } from '../lib/db';
-import { env } from '../src/env';
+import { env } from '../lib/env';
 
 export default async function handler(req: any, res: any) {
   const start = performance.now?.() ?? Date.now();

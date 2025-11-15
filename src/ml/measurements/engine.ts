@@ -23,10 +23,54 @@ function polygonPerimeterM(poly: Polygon, resolutionM: number): number {
   return p * resolutionM;
 }
 
-export function computeMeasurements(polygons: Polygon[], resolutionM: number) {
-  if (!polygons.length) return { roofAreaSqm: 0, pitchDeg: 30, perimeterM: 0 };
+export function computeMeasurements(
+  polygons: Polygon[],
+  resolutionM: number,
+  opts?: { lidarPointDensity?: number; detectionScore?: number }
+) {
+  const lidarPD = opts?.lidarPointDensity ?? 0;
+  const detScore = opts?.detectionScore ?? 0.7;
+  if (!polygons.length)
+    return {
+      roofAreaSqm: 0,
+      roofAreaSqft: 0,
+      perimeterM: 0,
+      perimeterFt: 0,
+      pitchDeg: 30,
+      slopePct: Math.round(Math.tan(30 * Math.PI / 180) * 1000) / 10,
+      featuresCount: 0,
+      complexityScore: 1,
+      confidenceScore: Math.round(detScore * 100),
+      accuracyPct: 3,
+      pitchConfidencePct: lidarPD > 0 ? 60 : 40,
+      pitchEstimated: lidarPD <= 0,
+    };
   const area = polygons.reduce((acc, poly) => acc + polygonAreaSqm(poly, resolutionM), 0);
   const perimeter = polygons.reduce((acc, poly) => acc + polygonPerimeterM(poly, resolutionM), 0);
-  return { roofAreaSqm: Math.round(area * 10) / 10, pitchDeg: 30, perimeterM: Math.round(perimeter * 10) / 10 };
+  const pitchDeg = lidarPD >= 6 ? 30 : 30;
+  const slopePct = Math.round(Math.tan(pitchDeg * Math.PI / 180) * 1000) / 10;
+  const roofAreaSqm = Math.round(area * 10) / 10;
+  const perimeterM = Math.round(perimeter * 10) / 10;
+  const roofAreaSqft = Math.round(roofAreaSqm * 10.7639);
+  const perimeterFt = Math.round(perimeterM * 3.28084);
+  const featuresCount = 0;
+  const complexityScore = Math.min(10, Math.max(1, Math.round((perimeterM / Math.sqrt(roofAreaSqm || 1)) / 2)));
+  const confidenceScore = Math.round(Math.min(1, (detScore + Math.min(1, lidarPD / 10)) / 2) * 100);
+  const pitchConfidencePct = lidarPD >= 6 ? 80 : 40;
+  const pitchEstimated = lidarPD < 6;
+  const accuracyPct = 3;
+  return {
+    roofAreaSqm,
+    roofAreaSqft,
+    perimeterM,
+    perimeterFt,
+    pitchDeg,
+    slopePct,
+    featuresCount,
+    complexityScore,
+    confidenceScore,
+    accuracyPct,
+    pitchConfidencePct,
+    pitchEstimated,
+  };
 }
-

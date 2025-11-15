@@ -15,6 +15,7 @@ model Analysis {
   status       AnalysisStatus @default(PENDING)
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
+  completedAt  DateTime?
   measurements Measurements?
   photos       Photo[]
 }
@@ -25,7 +26,18 @@ model Measurements {
   analysis    Analysis @relation(fields: [analysisId], references: [id])
   roofAreaSqm Float?
   pitchDeg    Float?
+  slopePct    Float?
   perimeterM  Float?
+  roofAreaSqft Float?
+  perimeterFt  Float?
+  featuresCount Int?
+  complexityScore Int?
+  confidenceScore Int?
+  accuracyPct  Int?
+  pitchConfidencePct Int?
+  pitchEstimated Boolean?
+  imageryUrl   String?
+  annotatedUrl String?
 }
 
 model Photo {

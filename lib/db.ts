@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { env } from '../src/env';
+import { env } from './env';
 
 const globalForPrisma = globalThis as unknown as { prisma?: any };
 
@@ -60,9 +60,7 @@ function createInMemoryPrisma() {
 
 export const prisma =
   globalForPrisma.prisma ||
-  (process.env.NODE_ENV === 'test'
-    ? new PrismaClient({ log: ['error', 'warn'] })
-    : env.databaseUrl
+  (env.databaseUrl
     ? new PrismaClient({ log: ['error', 'warn'] })
     : createInMemoryPrisma());
 

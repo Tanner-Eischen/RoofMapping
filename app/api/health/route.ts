@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { checkDatabase } from '@/lib/db';
-import { env } from '@/src/env';
+import { checkDatabase } from '../../../lib/db';
+import { env } from '../../../lib/env';
 
 export async function GET() {
   const start = typeof performance !== 'undefined' && 'now' in performance ? performance.now() : Date.now();
