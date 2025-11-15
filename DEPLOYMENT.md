@@ -117,6 +117,17 @@ For a traditional server deployment:
 
 ---
 
+## Security Notes
+
+**npm audit warnings:** You may see 4 moderate vulnerabilities in dev dependencies (vitest/esbuild). These are:
+- ✅ **Safe to ignore** - Only affect development server, not production
+- ✅ **Won't block deployment** - Production builds don't use these packages
+- ✅ **Dev-only** - The vulnerability is in the test/dev tooling, not your app
+
+If you want to fix them later, run `npm audit fix --force` (may require updating vitest to v4).
+
+---
+
 ## Environment Variables Checklist
 
 Make sure these are set in your deployment environment:
