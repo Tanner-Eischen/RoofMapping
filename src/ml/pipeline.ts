@@ -85,7 +85,7 @@ export async function runPipelineQuick(
   }
 
   let imagery: any;
-  let poly: Array<[number, number]>;
+  let poly: Array<[number, number]> = [];
 
   // If manual corners are provided, convert them to lat/lng and use them
   if (manualCorners && manualCorners.length >= 3 && imageExtent && tileSize) {
@@ -229,8 +229,8 @@ export async function runPipelineQuick(
     }
   }
 
-  // Ensure poly is always initialized (fallback for edge cases)
-  if (!poly || !imagery) {
+  // Ensure poly and imagery are always initialized (fallback for edge cases)
+  if (poly.length === 0 || !imagery) {
     // Last resort: create a default polygon centered on the image
     const size = imagery?.tileSize || 512;
     const centerX = size / 2;
